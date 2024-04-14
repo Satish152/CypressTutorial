@@ -143,22 +143,61 @@ xit("this is for Select tag",()=>{
         cy.get("div#Multiple iframe").its("0.contentDocument").find("iframe").its("0.contentDocument").find("input").type("Hello").should("have.value","Hello")
     })
 
-    it("handling alerts",()=>{
-      /*  cy.visit("https://demo.automationtesting.in/Alerts.html",{
+    xit("handling alerts",()=>{
+       cy.visit("https://demo.automationtesting.in/Alerts.html",{
+            // for prompt - having input textbox,Ok and Cancel buttons
             onBeforeLoad(win){
-                cy.stub(win, 'prompt').returns("Hello World")
+                cy.stub(win, 'prompt').returns("Test Automation").returns(false);
             }
         });
         cy.get(".btn-info").click();
         cy.wait(1000);
-        cy.window().its("prompt").should("be.called"); */
+        cy.window().its("prompt").should("be.called");
+    
+
+        /// Confirm popup - with  Ok and Cancel
+        // true for Ok and false for Cancel
+        cy.on("window:confirm",(text)=>{
+            console.log(text);
+            return false;
+        })
         
+        /// alert - only Ok button
+        cy.on("window:alert",(text)=>{
+            console.log(text);
+        })
+    })
+
+    xit('handling windows',()=>{
         cy.visit("https://www.hyrtutorials.com/p/window-handles-practice.html");
-        
+        cy.window().then((win)=>{
+        cy.stub(win,"open").as("newtab");
+        })
+        cy.get("#newTabBtn").click();
+        cy.get("@newtab").should("have.been.calledWith","https://www.hyrtutorials.com/p/alertsdemo.html");
+        cy.get("#newTabBtn").click();
+       // cy.get("@newtab").should("have.been.calledWith","https://www.hyrtutorials.com/p/alertsdemo.html");
+        cy.get("@newtab").should("be.calledThrice");
+    })
+
+    it("handling new window",()=>{
+      /*  cy.visit("https://www.hyrtutorials.com/p/window-handles-practice.html");
+        cy.window().then((win)=>{
+        cy.stub(win,"open").as("newWindow");
+        })
+        cy.get("#newWindowBtn").click();
+        cy.get("@newWindow").should("have.been.calledWith","https://www.hyrtutorials.com/p/basic-controls.html","_blank"); */
+
+        cy.visit("https://www.hyrtutorials.com/p/window-handles-practice.html");
         cy.window().then((win)=>{
             cy.stub(win,"open").as("open");
         })
-        cy.get("#newTabBtn").eq(0).click();
-        cy.get("@open").should("have.been.calledWith","https://www.hyrtutorials.com/p/alertsdemo.html")
+        cy.get("#newWindowBtn").click();
+        let testURL="https://www.hyrtutorials.com/p/basic-controls.html";
+        cy.get("@open").should("be.calledWith",testURL);
+        cy.window().then((win)=>{
+            win.location.href=testURL;
+        })
+        cy.go("back");
     })
 })

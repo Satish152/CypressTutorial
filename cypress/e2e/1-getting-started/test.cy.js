@@ -3,6 +3,7 @@
 describe("This is sample cypress test",()=>{
     beforeEach(()=>{
       // cy.visit("")
+      //cy.viewport("iphone-xr");
     })
 
     xit("This is to handle weblements",()=>{
